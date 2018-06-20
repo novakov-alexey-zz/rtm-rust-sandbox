@@ -16,6 +16,14 @@ impl TaskService {
         }
     }
 
+    pub fn create(&self, task: Task) -> Result<usize, Error> {
+        use core::schema::tasks::dsl::*;
+
+        super::diesel::insert_into(tasks)
+            .values(task)
+            .execute(&self.connection)
+    }
+
     pub fn get_tasks(&self, _list: String, _completed: bool, date: DateTime<Local>) -> Result<Vec<Task>, Error> {
         use core::schema::tasks::dsl::*;
         println!("{:?}", date);

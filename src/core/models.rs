@@ -10,7 +10,7 @@ use std::time::SystemTime;
 //    NoPriority,
 //}
 
-#[derive(Identifiable, Queryable, Debug, PartialEq, AsChangeset)]
+#[derive(Identifiable, Queryable, Debug, PartialEq, Insertable)]
 pub struct Task {
     pub id: i32,
     pub title: String,
