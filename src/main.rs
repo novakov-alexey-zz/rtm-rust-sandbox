@@ -14,24 +14,26 @@ fn main() {
     let connection = establish_connection();
     let tasks = TaskService::new(connection);
     let inbox_list = "Inbox";
+    let task_id = 1;
+    let day = 60 * 60 * 24;
 
     let task = Task {
-        id: 1,
+        id: task_id,
         title: "Buy a cheese".to_string(),
         added: SystemTime::now(),
-        due: SystemTime::now().add(Duration::from_secs(60 * 60 * 24)),
+        due: SystemTime::now().add(Duration::from_secs(day)),
         list: inbox_list.to_string(),
-        notes: "must be hard cheese".to_string(),
+        notes: "must be some hard cheese".to_string(),
         completed: false,
         priority: "High".to_string()
     };
-    let res = tasks.create(task);
-    res.expect("failed to create a new task");
+    let res = tasks.create(&task);
+    res.expect(&format!("failed to create a new task {:?}", &task));
 
     let list = tasks.get_tasks(inbox_list.to_string(), false, Local::now());
     println!("{:?}", list);
 
-    tasks.complete(1, true).unwrap();
+    tasks.complete(task_id, true).unwrap();
     let list = tasks.get_tasks(inbox_list.to_string(), true, Local::now());
     println!("{:?}", list);
 }

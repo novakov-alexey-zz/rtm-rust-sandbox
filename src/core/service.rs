@@ -16,7 +16,7 @@ impl TaskService {
         }
     }
 
-    pub fn create(&self, task: Task) -> Result<usize, Error> {
+    pub fn create(&self, task: &Task) -> Result<usize, Error> {
         use core::schema::tasks::dsl::*;
 
         super::diesel::insert_into(tasks)
