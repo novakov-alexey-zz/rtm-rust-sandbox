@@ -1,8 +1,6 @@
-extern crate chrono;
 extern crate core;
 extern crate rtm;
 
-use chrono::Local;
 use rtm::core::service::TaskService;
 use rtm::establish_connection;
 use rtm::core::models::Task;
@@ -30,10 +28,10 @@ fn main() {
     let res = tasks.create(&task);
     res.expect(&format!("failed to create a new task {:?}", &task));
 
-    let list = tasks.get_tasks(inbox_list.to_string(), false, Local::now());
+    let list = tasks.get_tasks(inbox_list.to_string(), false, SystemTime::now());
     println!("{:?}", list);
 
     tasks.complete(task_id, true).unwrap();
-    let list = tasks.get_tasks(inbox_list.to_string(), true, Local::now());
+    let list = tasks.get_tasks(inbox_list.to_string(), true, SystemTime::now());
     println!("{:?}", list);
 }
