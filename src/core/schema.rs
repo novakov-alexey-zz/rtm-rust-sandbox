@@ -2,11 +2,11 @@ table! {
     tasks (id) {
         id -> Int4,
         title -> Varchar,
-        added -> Timestamp,
-        due -> Timestamp,
+        added -> Timestamptz,
+        due -> Timestamptz,
         list -> Varchar,
         notes -> Text,
         completed -> Bool,
-        priority -> Varchar,
+        priority -> Text,
     }
 }

@@ -1,7 +1,8 @@
 //#[macro_use]
 use core::schema::*;
-use std::time::SystemTime;
+use chrono::NaiveDateTime;
 
+//TODO: 2. replace Task.priority String with enum
 //#[derive(Debug, DbEnum, PartialEq)]
 //pub enum PriorityEnum {
 //    High,
@@ -15,8 +16,8 @@ use std::time::SystemTime;
 pub struct Task {
     pub id: i32,
     pub title: String,
-    pub added: SystemTime,
-    pub due: SystemTime,
+    pub added: NaiveDateTime,
+    pub due: NaiveDateTime,
     pub list: String,
     pub notes: String,
     pub completed: bool,

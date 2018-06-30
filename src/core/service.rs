@@ -3,7 +3,7 @@ use diesel::*;
 use diesel::pg::PgConnection;
 use diesel::result::Error;
 use super::schema::tasks::dsl::*;
-use std::time::SystemTime;
+use chrono::NaiveDateTime;
 
 pub struct TaskService {
     connection: PgConnection
@@ -29,7 +29,7 @@ impl TaskService {
             .execute(&self.connection)
     }
 
-    pub fn get_tasks(&self, _list: String, _completed: bool, date: SystemTime) -> Result<Vec<Task>, Error> {
+    pub fn get_tasks(&self, _list: String, _completed: bool, date: NaiveDateTime) -> Result<Vec<Task>, Error> {
         tasks
             .filter(list.eq(_list))
             .filter(completed.eq(_completed))

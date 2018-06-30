@@ -5,5 +5,5 @@ authors = ["Alexey Novakov <novakov.alex at gmail com>"]
 
 [dependencies]
 chrono = "0.4.2"
-diesel = { version = "1.0.0", features = ["postgres"] }
+diesel = { version = "1.0.0", features = ["postgres", "chrono"] }
 dotenv = "0.9.0"
