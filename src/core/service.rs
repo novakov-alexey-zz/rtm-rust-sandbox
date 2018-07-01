@@ -17,8 +17,6 @@ impl TaskService {
     }
 
     pub fn create(&self, task: &Task) -> Result<usize, Error> {
-        use core::schema::tasks::dsl::*;
-
         super::diesel::insert_into(tasks)
             .values(task)
             .execute(&self.connection)
@@ -29,9 +27,9 @@ impl TaskService {
             .execute(&self.connection)
     }
 
-    pub fn get_tasks(&self, _list: String, _completed: bool, date: NaiveDateTime) -> Result<Vec<Task>, Error> {
+    pub fn get_tasks(&self, _list: &str, _completed: bool, date: NaiveDateTime) -> Result<Vec<Task>, Error> {
         tasks
-            .filter(list.eq(_list))
+            .filter(list.eq(_list.to_string()))
             .filter(completed.eq(_completed))
             .filter(due.eq(date))
             .limit(25)

@@ -11,7 +11,6 @@ use chrono::NaiveDateTime;
 //    NoPriority,
 //}
 
-//TODO: 1. replace SystemTime with DateTime from chrono crate
 #[derive(Identifiable, Queryable, Debug, PartialEq, Insertable)]
 pub struct Task {
     pub id: i32,

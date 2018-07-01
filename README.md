@@ -16,3 +16,8 @@ cargo install diesel_cli --no-default-features --features postgres
 ```sh
 diesel setup
 ```
+
+## Apply migration scripts to the database 
+```sh
+diesel migration run
+```
