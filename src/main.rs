@@ -12,11 +12,11 @@ use rtm::core::service::TaskService;
 use rtm::establish_connection;
 
 mod api {
-    use chrono::NaiveDate;
     use rocket::State;
     use rocket_contrib::Json;
     use rtm::core::models::Task;
     use rtm::core::service::TaskService;
+    use chrono::Utc;
 
     #[get("/")]
     fn index() -> &'static str {
@@ -24,9 +24,9 @@ mod api {
     }
 
     #[get("/tasks/<list>/<completed>")]
-    fn tasks(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
-        let today = NaiveDate::from_ymd(2018, 7, 1).and_hms(9, 10, 11);
-        service.get_tasks(&list, completed, today).ok().map(|l| Json(l))
+    fn tasks_today(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
+        let now = Utc::now().naive_local();
+        service.get_tasks(&list, completed, now).ok().map(|l| Json(l))
     }
 }
 
@@ -39,5 +39,5 @@ fn service() -> TaskService {
 fn main() {
     rocket::ignite()
         .manage(service())
-        .mount("/api", routes![index, tasks]).launch();
+        .mount("/api", routes![index, tasks_today]).launch();
 }
