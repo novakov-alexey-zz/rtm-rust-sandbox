@@ -4,6 +4,14 @@ version = "0.1.0"
 authors = ["Alexey Novakov <novakov.alex at gmail com>"]
 
 [dependencies]
-chrono = "0.4.2"
+chrono = {version = "0.4.2", features = ["serde"]}
 diesel = { version = "1.0.0", features = ["postgres", "chrono"] }
 dotenv = "0.9.0"
+
+rocket = "0.3.14"
+rocket_codegen = "0.3.14"
+rocket_contrib = "0.3.14"
+
+serde = "1.0"
+serde_json = "1.0"
+serde_derive = "1.0"

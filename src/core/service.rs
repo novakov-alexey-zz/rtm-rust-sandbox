@@ -9,6 +9,10 @@ pub struct TaskService {
     connection: PgConnection
 }
 
+//TODO: what should be in the impl
+unsafe impl Send for TaskService {}
+unsafe impl Sync for TaskService {}
+
 impl TaskService {
     pub fn new(conn: PgConnection) -> TaskService {
         TaskService {
@@ -31,7 +35,7 @@ impl TaskService {
         tasks
             .filter(list.eq(_list.to_string()))
             .filter(completed.eq(_completed))
-            .filter(due.eq(date))
+            .filter(due.ge(date))
             .limit(25)
             .load::<Task>(&self.connection)
     }

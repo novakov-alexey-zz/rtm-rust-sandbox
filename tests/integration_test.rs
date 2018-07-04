@@ -12,7 +12,7 @@ fn it_update_task() {
     //given
     let connection = establish_connection();
     let tasks = TaskService::new(connection);
-    let inbox = "Inbox";
+    let inbox = "inbox";
     let task_id = 1;
     let added = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);
     let due = NaiveDate::from_ymd(2018, 7, 9).and_hms(9, 10, 11);

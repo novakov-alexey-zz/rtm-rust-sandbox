@@ -1,6 +1,5 @@
-//#[macro_use]
-use core::schema::*;
 use chrono::NaiveDateTime;
+use core::schema::*;
 
 //TODO: 2. replace Task.priority String with enum
 //#[derive(Debug, DbEnum, PartialEq)]
@@ -11,7 +10,7 @@ use chrono::NaiveDateTime;
 //    NoPriority,
 //}
 
-#[derive(Identifiable, Queryable, Debug, PartialEq, Insertable)]
+#[derive(Identifiable, Queryable, Debug, PartialEq, Insertable, Serialize)]
 pub struct Task {
     pub id: i32,
     pub title: String,

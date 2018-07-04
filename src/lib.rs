@@ -2,6 +2,8 @@
 extern crate diesel;
 extern crate dotenv;
 extern crate chrono;
+#[macro_use]
+extern crate serde_derive;
 
 use diesel::pg::PgConnection;
 use diesel::prelude::*;
