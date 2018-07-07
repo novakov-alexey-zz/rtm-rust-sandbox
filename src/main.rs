@@ -9,35 +9,43 @@ extern crate rtm;
 
 use api::*;
 use rtm::core::service::TaskService;
-use rtm::establish_connection;
+use rtm::create_db_pool;
 
 mod api {
-    use chrono::NaiveDate;
     use rocket::State;
     use rocket_contrib::Json;
     use rtm::core::models::Task;
     use rtm::core::service::TaskService;
+    use chrono::{NaiveDateTime, Duration, Utc};
 
     #[get("/")]
     fn index() -> &'static str {
         "Hello, RTM!"
     }
 
-    #[get("/tasks/<list>/<completed>")]
-    fn tasks(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
-        let today = NaiveDate::from_ymd(2018, 7, 1).and_hms(9, 10, 11);
-        service.get_tasks(&list, completed, today).ok().map(|l| Json(l))
+    #[get("/tasks/today/<list>/<completed>")]
+    fn list_today(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
+        let today = Utc::now().naive_local();
+        tasks(&*service, &list, completed, today)
+    }
+
+    #[get("/tasks/yesterday/<list>/<completed>")]
+    fn list_yesterday(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
+        let yesterday = (Utc::now() - Duration::days(1)).naive_local();
+        tasks(&*service, &list, completed, yesterday)
+    }
+
+    fn tasks(service: &TaskService, list: &str, completed: bool, due: NaiveDateTime) -> Option<Json<Vec<Task>>> {
+        service.get_tasks(list, completed, due).ok().map(|l| Json(l))
     }
 }
 
 fn service() -> TaskService {
-    let connection = establish_connection();
-    let tasks = TaskService::new(connection);
-    tasks
+    TaskService::new(create_db_pool())
 }
 
 fn main() {
     rocket::ignite()
         .manage(service())
-        .mount("/api", routes![index, tasks]).launch();
+        .mount("/api", routes![index, list_today, list_yesterday]).launch();
 }

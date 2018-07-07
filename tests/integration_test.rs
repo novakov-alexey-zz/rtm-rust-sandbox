@@ -5,13 +5,12 @@ extern crate rtm;
 use chrono::NaiveDate;
 use rtm::core::models::Task;
 use rtm::core::service::TaskService;
-use rtm::establish_connection;
+use rtm::create_db_pool;
 
 #[test]
 fn it_update_task() {
     //given
-    let connection = establish_connection();
-    let tasks = TaskService::new(connection);
+    let tasks = TaskService::new(create_db_pool());
     let inbox = "inbox";
     let task_id = 1;
     let added = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);
