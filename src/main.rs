@@ -40,12 +40,8 @@ mod api {
     }
 }
 
-fn service() -> TaskService {
-    TaskService::new(create_db_pool())
-}
-
 fn main() {
     rocket::ignite()
-        .manage(service())
+        .manage(TaskService::new(create_db_pool()))
         .mount("/api", routes![index, list_today, list_yesterday]).launch();
 }
