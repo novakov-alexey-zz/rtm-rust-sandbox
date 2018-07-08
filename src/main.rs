@@ -35,6 +35,7 @@ mod api {
         tasks(&*service, &list, completed, yesterday)
     }
 
+    //TODO: change to Result<Json, Error> return type
     fn tasks(service: &TaskService, list: &str, completed: bool, due: NaiveDateTime) -> Option<Json<Vec<Task>>> {
         service.get_tasks(list, completed, due).ok().map(|l| Json(l))
     }
@@ -43,5 +44,6 @@ mod api {
 fn main() {
     rocket::ignite()
         .manage(TaskService::new(create_db_pool()))
-        .mount("/api", routes![index, list_today, list_yesterday]).launch();
+        .mount("/api", routes![index, list_today, list_yesterday])
+        .launch();
 }
