@@ -24,20 +24,20 @@ mod api {
     }
 
     #[get("/tasks/today/<list>/<completed>")]
-    fn list_today(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
+    fn list_today(service: State<TaskService>, list: String, completed: bool) -> Result<Json<Vec<Task>>, String> {
         let today = Utc::now().naive_local();
         tasks(&*service, &list, completed, today)
     }
 
     #[get("/tasks/yesterday/<list>/<completed>")]
-    fn list_yesterday(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
+    fn list_yesterday(service: State<TaskService>, list: String, completed: bool) -> Result<Json<Vec<Task>>, String> {
         let yesterday = (Utc::now() - Duration::days(1)).naive_local();
         tasks(&*service, &list, completed, yesterday)
     }
 
     //TODO: change to Result<Json, Error> return type
-    fn tasks(service: &TaskService, list: &str, completed: bool, due: NaiveDateTime) -> Option<Json<Vec<Task>>> {
-        service.get_tasks(list, completed, due).ok().map(|l| Json(l))
+    fn tasks(service: &TaskService, list: &str, completed: bool, due: NaiveDateTime) -> Result<Json<Vec<Task>>, String> {
+        service.get_tasks(list, completed, due).map(|l| Json(l))
     }
 }
 
