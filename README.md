@@ -33,12 +33,12 @@ diesel migration run
 cargo run 
 ```
 
-#4. Run Integration Tests
+# 4. Run Integration Tests
 ```sh
 cargo test 
 ```
 
-#5. Call RTM app
+# 5. Call RTM app
 ```sh
 curl localhost:8000/api/tasks/inbox/true 
 ```
