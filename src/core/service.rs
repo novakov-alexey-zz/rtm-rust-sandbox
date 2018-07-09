@@ -34,9 +34,9 @@ impl TaskService {
         })
     }
 
-    pub fn delete(&self, _id: i32) -> Result<usize, String> {
+    pub fn delete(&self, task_id: i32) -> Result<usize, String> {
         self.conn().and_then(|c|
-            super::diesel::delete(tasks.filter(id.eq(_id)))
+            super::diesel::delete(tasks.filter(id.eq(task_id)))
                 .execute(&*c)
                 .map_err(TaskService::to_string)
         )
