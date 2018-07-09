@@ -38,7 +38,7 @@ fn it_update_task() {
     assert_eq!(1, inserted_rows);
 
     //when
-    let list = tasks.get_tasks(inbox, false, due);
+    let list = tasks.get_tasks(inbox, false, Some(due));
     //then
     assert!(list.is_ok());
     assert_eq!(1, list.unwrap().len());
@@ -48,7 +48,7 @@ fn it_update_task() {
     //then
     assert!(res.is_ok());
     //when
-    let res = tasks.get_tasks(inbox, true, due);
+    let res = tasks.get_tasks(inbox, true, Some(due));
     //then
     assert!(res.is_ok());
     let list = res.unwrap();

@@ -42,16 +42,23 @@ impl TaskService {
         )
     }
 
-    pub fn get_tasks(&self, _list: &str, _completed: bool, date: NaiveDateTime) -> Result<Vec<Task>, String> {
-        self.conn().and_then(|c|
-            tasks
+    pub fn get_tasks(&self, _list: &str, done: bool, date: Option<NaiveDateTime>) -> Result<Vec<Task>, String> {
+        self.conn().and_then(|c| {
+            let query = tasks
                 .filter(list.eq(_list.to_string()))
-                .filter(completed.eq(_completed))
-                .filter(due.ge(date))
+                .filter(completed.eq(done))
                 .limit(TASK_LIMIT)
+                .into_boxed();
+
+            let with_due_date = match date {
+                Some(d) => query.filter(due.ge(d)),
+                _ => query,
+            };
+
+            with_due_date
                 .load::<Task>(&*c)
                 .map_err(TaskService::to_string)
-        )
+        })
     }
 
     pub fn complete(&self, _id: i32, done: bool) -> Result<usize, String> {

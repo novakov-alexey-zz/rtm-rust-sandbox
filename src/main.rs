@@ -28,17 +28,21 @@ mod api {
     #[get("/tasks/today/<list>/<completed>")]
     fn list_today(service: State<TaskService>, list: String, completed: bool) -> JsonOrError {
         let today = Utc::now().naive_local();
-        tasks(&*service, &list, completed, today)
+        tasks(&*service, &list, completed, Some(today))
     }
 
     #[get("/tasks/yesterday/<list>/<completed>")]
     fn list_yesterday(service: State<TaskService>, list: String, completed: bool) -> JsonOrError {
         let yesterday = (Utc::now() - Duration::days(1)).naive_local();
-        tasks(&*service, &list, completed, yesterday)
+        tasks(&*service, &list, completed, Some(yesterday))
     }
 
-    //TODO: change to Result<Json, Error> return type
-    fn tasks(service: &TaskService, list: &str, completed: bool, due: NaiveDateTime) -> Result<Json<Vec<Task>>, String> {
+    #[get("/tasks/incomplete/<list>")]
+    fn list_incomplete(service: State<TaskService>, list: String) -> JsonOrError {
+        tasks(&*service, &list, false, None)
+    }
+
+    fn tasks(service: &TaskService, list: &str, completed: bool, due: Option<NaiveDateTime>) -> JsonOrError {
         service.get_tasks(list, completed, due).map(|l| Json(l))
     }
 }
@@ -46,6 +50,6 @@ mod api {
 fn main() {
     rocket::ignite()
         .manage(TaskService::new(create_db_pool()))
-        .mount("/api", routes![index, list_today, list_yesterday])
+        .mount("/api", routes![index, list_today, list_yesterday, list_incomplete])
         .launch();
 }
