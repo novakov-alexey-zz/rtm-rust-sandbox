@@ -18,19 +18,21 @@ mod api {
     use rtm::core::service::TaskService;
     use chrono::{NaiveDateTime, Duration, Utc};
 
+    type JsonOrError = Result<Json<Vec<Task>>, String>;
+
     #[get("/")]
     fn index() -> &'static str {
         "Hello, RTM!"
     }
 
     #[get("/tasks/today/<list>/<completed>")]
-    fn list_today(service: State<TaskService>, list: String, completed: bool) -> Result<Json<Vec<Task>>, String> {
+    fn list_today(service: State<TaskService>, list: String, completed: bool) -> JsonOrError {
         let today = Utc::now().naive_local();
         tasks(&*service, &list, completed, today)
     }
 
     #[get("/tasks/yesterday/<list>/<completed>")]
-    fn list_yesterday(service: State<TaskService>, list: String, completed: bool) -> Result<Json<Vec<Task>>, String> {
+    fn list_yesterday(service: State<TaskService>, list: String, completed: bool) -> JsonOrError {
         let yesterday = (Utc::now() - Duration::days(1)).naive_local();
         tasks(&*service, &list, completed, yesterday)
     }
