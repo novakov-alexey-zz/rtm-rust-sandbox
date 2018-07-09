@@ -1,6 +1,6 @@
 # Remember The Milk (play ground app)
 
-Test application to play with Rust language
+Test application to play with Rust language including database and web layers
 
 # 1. Switch to Rust nightly
 ```sh
