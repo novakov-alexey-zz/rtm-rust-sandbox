@@ -7,6 +7,12 @@ use r2d2_diesel::ConnectionManager;
 use r2d2::{Pool, PooledConnection};
 use std::error;
 
+pub enum TaskSort {
+    DueDate,
+    Priority,
+    Name,
+}
+
 pub struct TaskService {
     connection_pool: Pool<ConnectionManager<PgConnection>>
 }
@@ -43,19 +49,30 @@ impl TaskService {
     }
 
     pub fn get_tasks(&self, _list: &str, done: bool, date: Option<NaiveDateTime>) -> Result<Vec<Task>, String> {
+        self.get_sorted_tasks(_list, done, date, TaskSort::DueDate)
+    }
+
+    pub fn get_sorted_tasks(&self, _list: &str, done: bool, date: Option<NaiveDateTime>, sort: TaskSort) -> Result<Vec<Task>, String> {
         self.conn().and_then(|c| {
-            let query = tasks
+            let q = tasks
                 .filter(list.eq(_list.to_string()))
                 .filter(completed.eq(done))
                 .limit(TASK_LIMIT)
                 .into_boxed();
 
-            let with_due_date = match date {
-                Some(d) => query.filter(due.ge(d)),
-                _ => query,
+            let q = match date {
+                Some(d) => q.filter(due.ge(d)),
+                _ => q,
             };
 
-            with_due_date
+
+            let with_sort = match sort {
+                TaskSort::DueDate => q.order(due.desc()),
+                TaskSort::Priority => q.order(priority.desc()),
+                TaskSort::Name => q.order(title.desc()),
+            };
+
+            with_sort
                 .load::<Task>(&*c)
                 .map_err(TaskService::to_string)
         })
