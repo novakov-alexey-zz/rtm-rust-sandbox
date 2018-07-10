@@ -36,7 +36,7 @@ impl TaskService {
             super::diesel::insert_into(tasks)
                 .values(task)
                 .execute(&*c)
-                .map_err(TaskService::to_string)
+                .map_err(self::to_string)
         })
     }
 
@@ -44,7 +44,7 @@ impl TaskService {
         self.conn().and_then(|c|
             super::diesel::delete(tasks.filter(id.eq(task_id)))
                 .execute(&*c)
-                .map_err(TaskService::to_string)
+                .map_err(self::to_string)
         )
     }
 
@@ -55,7 +55,6 @@ impl TaskService {
     pub fn get_sorted_tasks(&self, _list: &str, done: bool, date: Option<NaiveDateTime>, sort: TaskSort) -> Result<Vec<Task>, String> {
         self.conn().and_then(|c| {
             let q = tasks
-                .filter(list.eq(_list.to_string()))
                 .filter(completed.eq(done))
                 .limit(TASK_LIMIT)
                 .into_boxed();
@@ -74,7 +73,7 @@ impl TaskService {
 
             with_sort
                 .load::<Task>(&*c)
-                .map_err(TaskService::to_string)
+                .map_err(self::to_string)
         })
     }
 
@@ -83,15 +82,15 @@ impl TaskService {
             super::diesel::update(tasks.filter(id.eq(_id)))
                 .set(completed.eq(done))
                 .execute(&*c)
-                .map_err(TaskService::to_string)
+                .map_err(self::to_string)
         )
     }
 
-    fn to_string<E>(e: E) -> String where E: error::Error {
-        e.to_string()
-    }
-
     fn conn(&self) -> Result<PooledConnection<ConnectionManager<PgConnection>>, String> {
-        self.connection_pool.get().map_err(TaskService::to_string)
+        self.connection_pool.get().map_err(self::to_string)
     }
+}
+
+fn to_string<E>(e: E) -> String where E: error::Error {
+    e.to_string()
 }
