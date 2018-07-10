@@ -60,3 +60,44 @@ fn it_create_then_complete_task() {
     assert_eq!(task_id, list[0].id);
     assert_eq!(true, list[0].completed);
 }
+
+#[test]
+fn it_create_then_sort() {
+    //given
+    let service = TaskService::new(create_db_pool());
+    let inbox = "inbox";
+    let task_id = 2;
+    let due = NaiveDate::from_ymd(2018, 8, 9).and_hms(9, 10, 11);
+    let task1 = new_task(inbox, task_id, due);
+
+    let private = "private";
+    let task_id_2 = 3;
+    let due_2 = NaiveDate::from_ymd(2018, 7, 9).and_hms(9, 10, 11);
+    let task2 = new_task(private, task_id_2, due_2);
+    //when
+    service.delete(task_id).unwrap();
+    service.delete(task_id_2).unwrap();
+
+    let res = service.create(&task1);
+    let inserted_rows = res.expect("failed to create a new task1");
+    //then
+    assert_eq!(1, inserted_rows);
+
+    //when
+    let res = service.create(&task2);
+    let inserted_rows = res.expect("failed to create a new task2");
+    //then
+    assert_eq!(1, inserted_rows);
+
+    //when
+    let today = Some(NaiveDate::from_ymd(2018, 6, 9).and_hms(9, 10, 11));
+    let res = service.get_sorted_tasks(None, false, today, TaskSort::DueDate);
+
+    //then
+    assert!(res.is_ok());
+    let list = res.unwrap();
+
+    assert_eq!(2, list.len());
+    assert_eq!(task_id_2, list[0].id);
+    assert_eq!(task_id, list[1].id);
+}
