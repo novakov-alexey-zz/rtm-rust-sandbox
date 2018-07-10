@@ -48,27 +48,31 @@ impl TaskService {
         )
     }
 
-    pub fn get_tasks(&self, _list: &str, done: bool, date: Option<NaiveDateTime>) -> Result<Vec<Task>, String> {
+    pub fn get_tasks(&self, _list: Option<&str>, done: bool, date: Option<NaiveDateTime>) -> Result<Vec<Task>, String> {
         self.get_sorted_tasks(_list, done, date, TaskSort::DueDate)
     }
 
-    pub fn get_sorted_tasks(&self, _list: &str, done: bool, date: Option<NaiveDateTime>, sort: TaskSort) -> Result<Vec<Task>, String> {
+    pub fn get_sorted_tasks(&self, _list: Option<&str>, done: bool, date: Option<NaiveDateTime>, sort: TaskSort) -> Result<Vec<Task>, String> {
         self.conn().and_then(|c| {
             let q = tasks
                 .filter(completed.eq(done))
                 .limit(TASK_LIMIT)
                 .into_boxed();
 
+            let q = match _list {
+                Some(l) => q.filter(list.eq(l.to_string())),
+                _ => q
+            };
+
             let q = match date {
                 Some(d) => q.filter(due.ge(d)),
                 _ => q,
             };
 
-
             let with_sort = match sort {
-                TaskSort::DueDate => q.order(due.desc()),
+                TaskSort::DueDate => q.order(due.asc()),
                 TaskSort::Priority => q.order(priority.desc()),
-                TaskSort::Name => q.order(title.desc()),
+                TaskSort::Name => q.order(title.asc()),
             };
 
             with_sort

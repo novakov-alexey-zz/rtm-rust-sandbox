@@ -14,20 +14,25 @@ fn index() -> &'static str {
 #[get("/tasks/today/<list>/<completed>")]
 fn list_today(service: State<TaskService>, list: String, completed: bool) -> JsonOrError {
     let today = Utc::now().naive_local();
-    tasks(&*service, &list, completed, Some(today))
+    tasks(&*service, Some(&list), completed, Some(today))
 }
 
 #[get("/tasks/yesterday/<list>/<completed>")]
 fn list_yesterday(service: State<TaskService>, list: String, completed: bool) -> JsonOrError {
     let yesterday = (Utc::now() - Duration::days(1)).naive_local();
-    tasks(&*service, &list, completed, Some(yesterday))
+    tasks(&*service, Some(&list), completed, Some(yesterday))
 }
 
 #[get("/tasks/incomplete/<list>")]
 fn list_incomplete(service: State<TaskService>, list: String) -> JsonOrError {
-    tasks(&*service, &list, false, None)
+    tasks(&*service, Some(&list), false, None)
 }
 
-fn tasks(service: &TaskService, list: &str, completed: bool, due: Option<NaiveDateTime>) -> JsonOrError {
+#[get("/tasks/incomplete")]
+fn all_incomplete(service: State<TaskService>) -> JsonOrError {
+    tasks(&*service, None, false, None)
+}
+
+fn tasks(service: &TaskService, list: Option<&str>, completed: bool, due: Option<NaiveDateTime>) -> JsonOrError {
     service.get_tasks(list, completed, due).map(|l| Json(l))
 }
