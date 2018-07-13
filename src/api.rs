@@ -36,3 +36,26 @@ fn all_incomplete(service: State<TaskService>) -> JsonOrError {
 fn tasks(service: &TaskService, list: Option<&str>, completed: bool, due: Option<NaiveDateTime>) -> JsonOrError {
     service.get_tasks(list, completed, due).map(|l| Json(l))
 }
+
+#[post("/tasks/<list>")]
+fn list_create(service: State<TaskService>, list: String) -> Result<Json<usize>, String> {
+    let added = Utc::now().naive_local();
+    let task = Task {
+        id: 0, //TODO: how to auto-generate the Id?
+        title,
+        added,
+        due,
+        list,
+        notes,
+        completed: false,
+        priority
+    };
+    service.create(&task).map(|i| {
+        let msg = if i > 0 {
+            "inserted".to_string()
+        } else {
+            format!("failed to insert {}", i)
+        };
+        Json(msg)
+    })
+}
