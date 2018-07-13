@@ -9,35 +9,13 @@ extern crate rtm;
 
 use api::*;
 use rtm::core::service::TaskService;
-use rtm::establish_connection;
+use rtm::create_db_pool;
 
-mod api {
-    use rocket::State;
-    use rocket_contrib::Json;
-    use rtm::core::models::Task;
-    use rtm::core::service::TaskService;
-    use chrono::Utc;
-
-    #[get("/")]
-    fn index() -> &'static str {
-        "Hello, RTM!"
-    }
-
-    #[get("/tasks/<list>/<completed>")]
-    fn tasks_today(service: State<TaskService>, list: String, completed: bool) -> Option<Json<Vec<Task>>> {
-        let now = Utc::now().naive_local();
-        service.get_tasks(&list, completed, now).ok().map(|l| Json(l))
-    }
-}
-
-fn service() -> TaskService {
-    let connection = establish_connection();
-    let tasks = TaskService::new(connection);
-    tasks
-}
+mod api;
 
 fn main() {
     rocket::ignite()
-        .manage(service())
-        .mount("/api", routes![index, tasks_today]).launch();
+        .manage(TaskService::new(create_db_pool()))
+        .mount("/api", routes![index, list_today, list_yesterday, list_incomplete, all_incomplete])
+        .launch();
 }

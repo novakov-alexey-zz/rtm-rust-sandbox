@@ -4,7 +4,7 @@
 CREATE TABLE tasks (
   id SERIAL PRIMARY KEY,
   title VARCHAR NOT NULL,
-  added DATETIME DEFAULT CURRENT_TIMESTAMP,
+  added TIMESTAMP with time zone NOT NULL,
   due TIMESTAMP with time zone NOT NULL,
   list VARCHAR NOT NULL,
   notes TEXT NOT NULL,
