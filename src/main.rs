@@ -1,6 +1,5 @@
-#![feature(plugin)]
+#![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
-
 extern crate chrono;
 extern crate core;
 extern crate rocket;
@@ -16,6 +15,6 @@ mod api;
 fn main() {
     rocket::ignite()
         .manage(TaskService::new(create_db_pool()))
-        .mount("/api", routes![index, list_today, list_yesterday, list_incomplete, all_incomplete])
+        .mount("/api", routes![index, list_today, list_yesterday, list_incomplete, all_incomplete, list_create])
         .launch();
 }

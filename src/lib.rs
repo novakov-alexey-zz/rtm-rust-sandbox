@@ -1,17 +1,17 @@
-#[macro_use]
-extern crate diesel;
-extern crate r2d2;
-extern crate r2d2_diesel;
-extern crate dotenv;
 extern crate chrono;
 #[macro_use]
-extern crate serde_derive;
+extern crate diesel;
+extern crate dotenv;
+extern crate r2d2;
+extern crate r2d2_diesel;
 extern crate rocket;
+#[macro_use]
+extern crate serde_derive;
 
 use diesel::pg::PgConnection;
 use dotenv::dotenv;
+use r2d2::Pool;
 use r2d2_diesel::ConnectionManager;
-use r2d2::{Pool};
 use std::env;
 use std::time::Duration;
 

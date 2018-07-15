@@ -2,7 +2,7 @@ extern crate chrono;
 extern crate core;
 extern crate rtm;
 
-use chrono::{NaiveDateTime, NaiveDate};
+use chrono::{NaiveDate, NaiveDateTime};
 use rtm::core::models::Task;
 use rtm::core::service::{TaskService, TaskSort};
 use rtm::create_db_pool;
@@ -28,7 +28,7 @@ fn it_create_then_complete_task() {
     let service = TaskService::new(create_db_pool());
     let inbox = "inbox";
     let task_id = 1;
-    let due = NaiveDate::from_ymd(2018, 9, 9).and_hms(9, 10, 11);
+    let due = NaiveDate::from_ymd(2018, 5, 9).and_hms(9, 10, 11);
 
     let task = new_task(inbox, task_id, due);
 
@@ -37,7 +37,7 @@ fn it_create_then_complete_task() {
     assert!(deleted_rows.is_ok(), "failed to delete a task");
     println!("rows deleted: {:?}", deleted_rows.unwrap());
 
-    let res = service.create(&task);
+    let res = service.insert(&task);
     let inserted_rows = res.expect("failed to create a new task");
     //then
     assert_eq!(1, inserted_rows);
@@ -78,13 +78,13 @@ fn it_create_then_sort() {
     service.delete(task_id).unwrap();
     service.delete(task_id_2).unwrap();
 
-    let res = service.create(&task1);
+    let res = service.insert(&task1);
     let inserted_rows = res.expect("failed to create a new task1");
     //then
     assert_eq!(1, inserted_rows);
 
     //when
-    let res = service.create(&task2);
+    let res = service.insert(&task2);
     let inserted_rows = res.expect("failed to create a new task2");
     //then
     assert_eq!(1, inserted_rows);
