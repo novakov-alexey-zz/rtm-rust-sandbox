@@ -1,11 +1,11 @@
-use core::models::Task;
+use chrono::NaiveDateTime;
+use core::models::{NewTask, Task};
 use diesel::*;
 use diesel::pg::PgConnection;
-use super::schema::tasks::dsl::*;
-use chrono::NaiveDateTime;
-use r2d2_diesel::ConnectionManager;
 use r2d2::{Pool, PooledConnection};
+use r2d2_diesel::ConnectionManager;
 use std::error;
+use super::schema::tasks::dsl::*;
 
 pub enum TaskSort {
     DueDate,
@@ -17,9 +17,8 @@ pub struct TaskService {
     connection_pool: Pool<ConnectionManager<PgConnection>>
 }
 
-//TODO: what should be in the impl
+// Pool encapsulates Arc state so doing empty Send/Sync implementation
 unsafe impl Send for TaskService {}
-
 unsafe impl Sync for TaskService {}
 
 const TASK_LIMIT: i64 = 25;
@@ -31,13 +30,24 @@ impl TaskService {
         }
     }
 
-    pub fn create(&self, task: &Task) -> Result<usize, String> {
+    pub fn create_new(&self, task: &NewTask) -> Result<usize, String> {
+        // duplicate
         self.conn().and_then(|c| {
             super::diesel::insert_into(tasks)
                 .values(task)
                 .execute(&*c)
                 .map_err(self::to_string)
         })
+    }
+
+    pub fn insert(&self, task: &Task) -> Result<usize, String> {
+        // duplicate - How to get rid of this duplicated code in Diesel library?
+        self.conn().and_then(|c|
+            super::diesel::insert_into(tasks)
+                .values(task)
+                .execute(&*c)
+                .map_err(self::to_string)
+        )
     }
 
     pub fn delete(&self, task_id: i32) -> Result<usize, String> {
