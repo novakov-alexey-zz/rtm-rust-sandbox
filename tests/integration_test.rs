@@ -26,7 +26,7 @@ fn new_task(list: &str, task_id: i32, due: NaiveDateTime) -> Task {
 fn it_create_then_complete_task() {
     //given
     let service = TaskService::new(create_db_pool());
-    let inbox = "inbox";
+    let inbox = "inbox_1";
     let task_id = 1;
     let due = NaiveDate::from_ymd(2018, 5, 9).and_hms(9, 10, 11);
 
@@ -65,7 +65,7 @@ fn it_create_then_complete_task() {
 fn it_create_then_sort() {
     //given
     let service = TaskService::new(create_db_pool());
-    let inbox = "inbox";
+    let inbox = "inbox_2";
     let task_id = 2;
     let due = NaiveDate::from_ymd(2018, 8, 9).and_hms(9, 10, 11);
     let task1 = new_task(inbox, task_id, due);
