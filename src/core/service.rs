@@ -58,6 +58,15 @@ impl TaskService {
         )
     }
 
+
+    pub fn delete_by_title(&self, _title: &str) -> Result<usize, String> {
+        self.conn().and_then(|c|
+            super::diesel::delete(tasks.filter(title.eq(_title)))
+                .execute(&*c)
+                .map_err(self::to_string)
+        )
+    }
+
     pub fn get_tasks(&self, _list: Option<&str>, done: bool, date: Option<NaiveDateTime>) -> Result<Vec<Task>, String> {
         self.get_sorted_tasks(_list, done, date, TaskSort::DueDate)
     }
