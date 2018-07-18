@@ -5,6 +5,8 @@ extern crate core;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rtm;
+#[macro_use]
+extern crate serde_derive;
 
 use api::*;
 use rtm::core::service::TaskService;
