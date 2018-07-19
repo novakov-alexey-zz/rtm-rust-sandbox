@@ -58,7 +58,7 @@ fn tasks(service: &TaskService, list: Option<&str>, completed: bool, due: Option
 #[post("/tasks", format = "application/json", data = "<new_task>")]
 fn list_create(service: State<TaskService>, new_task: Json<NewTaskReq>) -> Result<Json<Status>, String> {
     let added = Utc::now().naive_local();
-    let t = new_task.into_inner();
+    let t = &*new_task;
     let due = NaiveDateTime::parse_from_str(&t.due, "%Y-%m-%d %H:%M:%S");
 
     match due {
