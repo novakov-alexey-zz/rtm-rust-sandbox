@@ -8,26 +8,13 @@ extern crate rtm;
 #[macro_use]
 extern crate serde_derive;
 
-use api::*;
+use routes::start_server;
 use rtm::core::service::TaskService;
 use rtm::create_db_pool;
 
-mod api;
+mod routes;
 
 fn main() {
-    rocket::ignite()
-        .manage(TaskService::new(create_db_pool()))
-        .mount(
-            "/api",
-            routes![
-                index,
-                list_today,
-                list_yesterday,
-                list_incompleted,
-                all_incompleted,
-                create,
-                complete
-            ],
-        )
-        .launch();
+    let error = start_server(TaskService::new(create_db_pool()));
+    drop(error);
 }

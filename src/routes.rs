@@ -1,7 +1,7 @@
 extern crate rocket;
-extern crate rocket_contrib;
 
 use chrono::{Duration, NaiveDateTime, Utc};
+use rocket::error::LaunchError;
 use rocket::State;
 use rocket_contrib::Json;
 use rtm::core::models::{NewTask, Task};
@@ -81,7 +81,7 @@ fn create(service: State<TaskService>, new_task: Json<NewTaskReq>) -> Result<Jso
                 }
             })
         }
-        Err(pe) => Err(format!("Failed to parse due date: {}", pe.to_string())),
+        Err(pe) => Err(format!("Failed to parse due date: {}", pe)),
     }
 }
 
@@ -98,4 +98,22 @@ fn complete(
             Err(format!("Failed to update a task, returned number: {}", i))
         }
     })
+}
+
+pub fn start_server(service: TaskService) -> LaunchError {
+    rocket::ignite()
+        .manage(service)
+        .mount(
+            "/api",
+            routes![
+                index,
+                list_today,
+                list_yesterday,
+                list_incompleted,
+                all_incompleted,
+                create,
+                complete
+            ],
+        )
+        .launch()
 }
