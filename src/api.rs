@@ -7,6 +7,8 @@ use rocket_contrib::Json;
 use rtm::core::models::{NewTask, Task};
 use rtm::core::service::TaskService;
 
+const DATE_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
+
 type VecOrError = Result<Json<Vec<Task>>, String>;
 
 #[derive(Deserialize)]
@@ -67,7 +69,7 @@ fn list_create(
 ) -> Result<Json<Status>, String> {
     let added = Utc::now().naive_local();
     let t = &*new_task;
-    let due = NaiveDateTime::parse_from_str(&t.due, "%Y-%m-%d %H:%M:%S");
+    let due = NaiveDateTime::parse_from_str(&t.due, DATE_FORMAT);
 
     match due {
         Ok(d) => {
