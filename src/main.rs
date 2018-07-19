@@ -17,6 +17,16 @@ mod api;
 fn main() {
     rocket::ignite()
         .manage(TaskService::new(create_db_pool()))
-        .mount("/api", routes![index, list_today, list_yesterday, list_incomplete, all_incomplete, list_create])
+        .mount(
+            "/api",
+            routes![
+                index,
+                list_today,
+                list_yesterday,
+                list_incomplete,
+                all_incomplete,
+                list_create
+            ],
+        )
         .launch();
 }

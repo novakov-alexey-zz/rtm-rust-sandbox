@@ -3,10 +3,10 @@ extern crate core;
 extern crate rtm;
 
 use chrono::{NaiveDate, NaiveDateTime};
+use rtm::core::models::NewTask;
 use rtm::core::models::Task;
 use rtm::core::service::{TaskService, TaskSort};
 use rtm::create_db_pool;
-use rtm::core::models::NewTask;
 
 fn new_task(list: &str, task_id: i32, due: NaiveDateTime) -> Task {
     let added = NaiveDate::from_ymd(2018, 7, 8).and_hms(9, 10, 11);

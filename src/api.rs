@@ -51,12 +51,20 @@ fn all_incomplete(service: State<TaskService>) -> VecOrError {
     tasks(&*service, None, false, None)
 }
 
-fn tasks(service: &TaskService, list: Option<&str>, completed: bool, due: Option<NaiveDateTime>) -> VecOrError {
+fn tasks(
+    service: &TaskService,
+    list: Option<&str>,
+    completed: bool,
+    due: Option<NaiveDateTime>,
+) -> VecOrError {
     service.get_tasks(list, completed, due).map(|l| Json(l))
 }
 
 #[post("/tasks", format = "application/json", data = "<new_task>")]
-fn list_create(service: State<TaskService>, new_task: Json<NewTaskReq>) -> Result<Json<Status>, String> {
+fn list_create(
+    service: State<TaskService>,
+    new_task: Json<NewTaskReq>,
+) -> Result<Json<Status>, String> {
     let added = Utc::now().naive_local();
     let t = &*new_task;
     let due = NaiveDateTime::parse_from_str(&t.due, "%Y-%m-%d %H:%M:%S");
@@ -83,6 +91,6 @@ fn list_create(service: State<TaskService>, new_task: Json<NewTaskReq>) -> Resul
                 }
             })
         }
-        Err(pe) => Err(format!("Failed to parse due date: {}", pe.to_string()))
+        Err(pe) => Err(format!("Failed to parse due date: {}", pe.to_string())),
     }
 }
