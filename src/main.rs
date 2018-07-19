@@ -23,9 +23,10 @@ fn main() {
                 index,
                 list_today,
                 list_yesterday,
-                list_incomplete,
-                all_incomplete,
-                list_create
+                list_incompleted,
+                all_incompleted,
+                create,
+                complete
             ],
         )
         .launch();

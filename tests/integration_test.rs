@@ -36,7 +36,6 @@ fn it_create_then_complete_task() {
     //when
     let deleted_rows = service.delete(task_id);
     assert!(deleted_rows.is_ok(), "failed to delete a task");
-    println!("rows deleted: {:?}", deleted_rows.unwrap());
 
     let res = service.insert(&task);
     let inserted_rows = res.expect("failed to create a new task");
@@ -66,15 +65,14 @@ fn it_create_then_complete_task() {
 fn it_create_then_sort() {
     //given
     let service = TaskService::new(create_db_pool());
-    let inbox = "inbox_2";
+    let list = "it_create_then_sort";
     let task_id = 2;
     let due = NaiveDate::from_ymd(2018, 8, 9).and_hms(9, 10, 11);
-    let task1 = new_task(inbox, task_id, due);
+    let task1 = new_task(list, task_id, due);
 
-    let private = "private";
     let task_id_2 = 3;
     let due_2 = NaiveDate::from_ymd(2018, 7, 9).and_hms(9, 10, 11);
-    let task2 = new_task(private, task_id_2, due_2);
+    let task2 = new_task(list, task_id_2, due_2);
     //when
     service.delete(task_id).unwrap();
     service.delete(task_id_2).unwrap();
@@ -92,7 +90,7 @@ fn it_create_then_sort() {
 
     //when
     let today = Some(NaiveDate::from_ymd(2018, 6, 9).and_hms(9, 10, 11));
-    let res = service.get_sorted_tasks(None, false, today, TaskSort::DueDate);
+    let res = service.get_sorted_tasks(Some(list), false, today, TaskSort::DueDate);
 
     //then
     assert!(res.is_ok());

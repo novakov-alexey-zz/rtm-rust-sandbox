@@ -20,12 +20,6 @@ struct NewTaskReq {
     pub priority: String,
 }
 
-#[derive(Serialize)]
-struct Status {
-    succeeded: bool,
-    msg: String,
-}
-
 #[get("/")]
 fn index() -> &'static str {
     "Hello, RTM!"
@@ -44,12 +38,12 @@ fn list_yesterday(service: State<TaskService>, list: String, completed: bool) ->
 }
 
 #[get("/tasks/incomplete/<list>")]
-fn list_incomplete(service: State<TaskService>, list: String) -> VecOrError {
+fn list_incompleted(service: State<TaskService>, list: String) -> VecOrError {
     tasks(&*service, Some(&list), false, None)
 }
 
 #[get("/tasks/incomplete")]
-fn all_incomplete(service: State<TaskService>) -> VecOrError {
+fn all_incompleted(service: State<TaskService>) -> VecOrError {
     tasks(&*service, None, false, None)
 }
 
@@ -63,10 +57,7 @@ fn tasks(
 }
 
 #[post("/tasks", format = "application/json", data = "<new_task>")]
-fn list_create(
-    service: State<TaskService>,
-    new_task: Json<NewTaskReq>,
-) -> Result<Json<Status>, String> {
+fn create(service: State<TaskService>, new_task: Json<NewTaskReq>) -> Result<Json<String>, String> {
     let added = Utc::now().naive_local();
     let t = &*new_task;
     let due = NaiveDateTime::parse_from_str(&t.due, DATE_FORMAT);
@@ -84,10 +75,7 @@ fn list_create(
 
             service.create_new(&task).and_then(|i| {
                 if i > 0 {
-                    Ok(Json(Status {
-                        succeeded: true,
-                        msg: format!("rows inserted {}", i),
-                    }))
+                    Ok(Json(format!("rows inserted {}", i)))
                 } else {
                     Err(format!("failed to insert a row, returned number: {}", i))
                 }
@@ -95,4 +83,19 @@ fn list_create(
         }
         Err(pe) => Err(format!("Failed to parse due date: {}", pe.to_string())),
     }
+}
+
+#[put("/tasks/<task_id>/<complete>")]
+fn complete(
+    service: State<TaskService>,
+    task_id: i32,
+    complete: bool,
+) -> Result<Json<String>, String> {
+    service.complete(task_id, complete).and_then(|i| {
+        if i > 0 {
+            Ok(Json(format!("rows updated {}", i)))
+        } else {
+            Err(format!("Failed to update a task, returned number: {}", i))
+        }
+    })
 }
