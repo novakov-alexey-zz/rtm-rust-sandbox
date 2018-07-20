@@ -1,18 +1,19 @@
 extern crate rocket;
+extern crate rocket_contrib;
 
 use chrono::{Duration, NaiveDateTime, Utc};
-use rocket::error::LaunchError;
+use core::models::NewTask;
+use core::models::Task;
+use core::service::TaskService;
+use rocket::Rocket;
 use rocket::State;
-use rocket_contrib::Json;
-use rtm::core::models::{NewTask, Task};
-use rtm::core::service::TaskService;
+use routes::rocket_contrib::Json;
 
 const DATE_FORMAT: &str = "%Y-%m-%d %H:%M:%S";
-
 type VecOrError = Result<Json<Vec<Task>>, String>;
 
 #[derive(Deserialize)]
-struct NewTaskReq {
+pub struct NewTaskReq {
     pub title: String,
     pub due: String,
     pub list: String,
@@ -100,20 +101,17 @@ fn complete(
     })
 }
 
-pub fn start_server(service: TaskService) -> LaunchError {
-    rocket::ignite()
-        .manage(service)
-        .mount(
-            "/api",
-            routes![
-                index,
-                list_today,
-                list_yesterday,
-                list_incompleted,
-                all_incompleted,
-                create,
-                complete
-            ],
-        )
-        .launch()
+pub fn mount_routes(service: TaskService) -> Rocket {
+    rocket::ignite().manage(service).mount(
+        "/api",
+        routes![
+            index,
+            list_today,
+            list_yesterday,
+            list_incompleted,
+            all_incompleted,
+            create,
+            complete
+        ],
+    )
 }

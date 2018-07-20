@@ -1,5 +1,5 @@
 use chrono::NaiveDateTime;
-use core::schema::*;
+use core::schema::tasks;
 
 #[derive(Identifiable, Queryable, Debug, PartialEq, Insertable, Serialize)]
 pub struct Task {

@@ -1,3 +1,5 @@
+#![feature(plugin, custom_derive)]
+#![plugin(rocket_codegen)]
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
@@ -16,6 +18,7 @@ use std::env;
 use std::time::Duration;
 
 pub mod core;
+pub mod routes;
 
 pub fn create_db_pool() -> Pool<ConnectionManager<PgConnection>> {
     dotenv().ok(); // Grabbing ENV vars
