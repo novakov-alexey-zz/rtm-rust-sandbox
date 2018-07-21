@@ -22,9 +22,9 @@ pub fn mount_routes(service: TaskService) -> Rocket {
                 list_incompleted,
                 all_incompleted,
                 create,
-                complete,
-                all_incompleted_html
+                complete
             ],
         )
+        .mount("/", routes![all_incompleted_html])
         .attach(Template::fairing())
 }

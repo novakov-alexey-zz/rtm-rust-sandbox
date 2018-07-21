@@ -9,7 +9,7 @@ struct TemplateContext {
     items: Vec<Task>,
 }
 
-#[get("/tasks/incomplete/html")]
+#[get("/tasks/incomplete")]
 fn all_incompleted_html(service: State<TaskService>) -> Template {
     let res = service.get_tasks(None, false, None).unwrap();
     let context = TemplateContext {
