@@ -1,6 +1,7 @@
 extern crate rocket;
 extern crate rocket_contrib;
 
+use self::rocket_contrib::Template;
 use chrono::{Duration, NaiveDateTime, Utc};
 use core::models::NewTask;
 use core::models::Task;
@@ -19,6 +20,12 @@ pub struct NewTaskReq {
     pub list: String,
     pub notes: String,
     pub priority: String,
+}
+
+#[derive(Serialize)]
+struct TemplateContext {
+    name: String,
+    items: Vec<Task>,
 }
 
 #[get("/")]
@@ -46,6 +53,17 @@ fn list_incompleted(service: State<TaskService>, list: String) -> VecOrError {
 #[get("/tasks/incomplete")]
 fn all_incompleted(service: State<TaskService>) -> VecOrError {
     tasks(&*service, None, false, None)
+}
+
+#[get("/tasks/incomplete/html")]
+fn all_incompleted_html(service: State<TaskService>) -> Template {
+    let res = service.get_tasks(None, false, None).unwrap();
+    let context = TemplateContext {
+        name: "All incompleted tasks".to_string(),
+        items: res,
+    };
+
+    Template::render("index", &context)
 }
 
 fn tasks(
@@ -102,16 +120,20 @@ fn complete(
 }
 
 pub fn mount_routes(service: TaskService) -> Rocket {
-    rocket::ignite().manage(service).mount(
-        "/api",
-        routes![
-            index,
-            list_today,
-            list_yesterday,
-            list_incompleted,
-            all_incompleted,
-            create,
-            complete
-        ],
-    )
+    rocket::ignite()
+        .manage(service)
+        .mount(
+            "/api",
+            routes![
+                index,
+                list_today,
+                list_yesterday,
+                list_incompleted,
+                all_incompleted,
+                create,
+                complete,
+                all_incompleted_html
+            ],
+        )
+        .attach(Template::fairing())
 }
