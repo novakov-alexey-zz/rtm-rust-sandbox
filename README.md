@@ -42,3 +42,24 @@ cargo test
 ```sh
 curl localhost:8000/api/tasks/inbox/true 
 ```
+
+# Docker image build
+
+Run the following to compile and build a Docker image:
+```bash
+sh docker-image.sh
+```
+
+# Docker compose
+
+Run standard docker-compose to start and stop containers.
+
+Start containers:
+```bash
+docker-compose up -d
+```
+
+Stop containers:
+```bash
+docker-compose down
+```

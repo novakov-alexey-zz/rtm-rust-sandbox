@@ -1,0 +1,10 @@
+[development]
+address = "localhost"
+port = 8000
+log = "normal"
+limits = { forms = 32768 }
+
+[production]
+log = "critical"
+secret_key = "8Xui8SN4mI+7egV/9dlfYYLGQJeEx4+DwmSQLwDVXJg="
+limits = { forms = 32768 }

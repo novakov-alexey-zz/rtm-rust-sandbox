@@ -3,6 +3,7 @@ extern crate core;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate rtm;
+extern crate openssl;
 
 use rtm::core::service::TaskService;
 use rtm::create_db_pool;
