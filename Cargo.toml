@@ -6,6 +6,9 @@ authors = ["Alexey Novakov <novakov.alex at gmail com>"]
 [dependencies]
 chrono = {version = "0.4.2", features = ["serde"]}
 diesel = { version = "1.3.2", features = ["postgres", "chrono"] }
+diesel_migrations = "1.3.0"
+diesel_codegen = { version = "0.16.1", features = ["postgres"] }
+
 # Needed for Postgres.
 openssl = "*"
 dotenv = "0.9.0"

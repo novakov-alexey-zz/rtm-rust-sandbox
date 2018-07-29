@@ -1,6 +1,3 @@
-
---CREATE TYPE priority_enum AS ENUM ('High', 'Medium', 'Low', 'NoPriority');
-
 CREATE TABLE tasks (
   id SERIAL PRIMARY KEY,
   title VARCHAR NOT NULL,
