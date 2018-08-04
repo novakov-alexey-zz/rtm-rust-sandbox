@@ -16,10 +16,9 @@ use rtm::routes::mount_routes;
 embed_migrations!();
 
 fn main() {
-    let c = establish_connection();
+    let c = establish_connection().expect("Failed to connect to a database");;
     embedded_migrations::run_with_output(&c, &mut std::io::stdout())
         .expect("Failed to run database migration");
-
     let error = mount_routes(TaskService::new(create_db_pool())).launch();
     drop(error);
 }

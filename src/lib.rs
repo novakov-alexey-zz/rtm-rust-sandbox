@@ -15,17 +15,35 @@ use diesel::prelude::*;
 use dotenv::dotenv;
 use r2d2::Pool;
 use r2d2_diesel::ConnectionManager;
+use std::{thread, time};
 use std::env;
 use std::time::Duration;
 
 pub mod core;
 pub mod routes;
 
-pub fn establish_connection() -> PgConnection {
+const DELAY: Duration = time::Duration::from_secs(3);
+
+pub fn establish_connection() -> Result<PgConnection, String> {
     dotenv().ok();
     let database_url = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    PgConnection::establish(&database_url)
-        .expect(&format!("Error connecting to {}", database_url))
+
+    fn try(i: i32, url: &str) -> Result<PgConnection, String> {
+        match PgConnection::establish(url) {
+            Ok(p) => Ok(p),
+            Err(e) =>
+                if i == 0 {
+                    Err((&format!("Error connecting to {}, error: {}", url, e)).to_string())
+                } else {
+                    println!("Failed to connect. Trying one more time in \
+                    {:?}", DELAY);
+                    thread::sleep(DELAY);
+                    try(i - 1, url)
+                }
+        }
+    }
+
+    try(3, &database_url)
 }
 
 pub fn create_db_pool() -> Pool<ConnectionManager<PgConnection>> {
