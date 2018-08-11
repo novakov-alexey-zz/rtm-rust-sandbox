@@ -35,12 +35,12 @@ fn list_yesterday(service: State<TaskService>, list: String, completed: bool) ->
 }
 
 #[get("/tasks/incomplete/<list>")]
-fn list_incompleted(service: State<TaskService>, list: String) -> VecOrError {
+fn list_incomplete(service: State<TaskService>, list: String) -> VecOrError {
     tasks(&*service, Some(&list), false, None)
 }
 
 #[get("/tasks/incomplete")]
-fn all_incompleted(service: State<TaskService>) -> VecOrError {
+fn all_incomplete(service: State<TaskService>) -> VecOrError {
     tasks(&*service, None, false, None)
 }
 

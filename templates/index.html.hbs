@@ -2,20 +2,24 @@
 <html>
 
 <head>
-  <meta charset="utf-8" />
-  <title>Remember the Milk</title>
+    <meta charset="utf-8"/>
+    <title>Remember the Milk</title>
 </head>
 
 <body>
-  <h1>{{name}}</h1>
-  <h1>{{error}}</h1>
-  <ul>
-    {{#each items}}
-    <li>{{this.title}}
-      <br/> notes: {{this.notes}}
-      <br/> due: {{this.due}}</li>
-    {{/each}}
-  </ul>
+<h1>{{name}}</h1>
+<h1>{{error}}</h1>
+<ul>
+    <form action="/tasks/delete" method="post">
+        {{#each items}}
+            <li>{{this.title}}
+                <br/> notes: {{this.notes}}
+                <br/> due: {{this.due}}
+            </li>
+            <button name="task_id" value="{{this.id}}">Delete</button>
+        {{/each}}
+    </form>
+</ul>
 </body>
 
 </html>

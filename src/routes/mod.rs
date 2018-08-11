@@ -1,14 +1,14 @@
 extern crate rocket;
 extern crate rocket_contrib;
 
-mod html;
-mod rest;
-
-use self::rocket_contrib::Template;
 use core::service::TaskService;
 use rocket::Rocket;
 use routes::html::*;
 use routes::rest::*;
+use self::rocket_contrib::Template;
+
+mod html;
+mod rest;
 
 pub fn mount_routes(service: TaskService) -> Rocket {
     rocket::ignite()
@@ -19,12 +19,12 @@ pub fn mount_routes(service: TaskService) -> Rocket {
                 index,
                 list_today,
                 list_yesterday,
-                list_incompleted,
-                all_incompleted,
+                list_incomplete,
+                all_incomplete,
                 create,
                 complete
             ],
         )
-        .mount("/", routes![all_incompleted_html])
+        .mount("/", routes![all_incomplete_html, delete])
         .attach(Template::fairing())
 }
