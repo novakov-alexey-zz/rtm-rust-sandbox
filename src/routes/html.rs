@@ -1,10 +1,10 @@
 use core::models::Task;
 use core::service::TaskService;
-use rocket::State;
-use routes::rocket_contrib::Template;
+use rocket::request::FlashMessage;
 use rocket::request::Form;
 use rocket::response::{Flash, Redirect};
-use rocket::request::FlashMessage;
+use rocket::State;
+use routes::rocket_contrib::Template;
 
 #[derive(Serialize)]
 struct TemplateContext {
@@ -35,7 +35,7 @@ fn all_incomplete_html(service: State<TaskService>, flash: Option<FlashMessage>)
     let context = TemplateContext {
         name: ALL_INCOMPLETE.to_string(),
         items,
-        error:  msg.map(|m| m + &error.unwrap_or("".to_string())),
+        error: msg.map(|m| m + &error.unwrap_or("".to_string())),
     };
     Template::render("index", &context)
 }
@@ -48,9 +48,8 @@ fn delete(service: State<TaskService>, form: Form<DeleteTask>) -> Flash<Redirect
 
     match deleted {
         Ok(n) => Flash::success(
-            Redirect::to(URI), &format!("Removed task {:?}", id)),
+            Redirect::to(URI), &format!("Removed {:?} task with id = {:?}", n, id)),
         Err(m) => Flash::error(
-            Redirect::to(URI), &format!("Failed to remove task {:?}", id)
-        )
+            Redirect::to(URI), &format!("Failed to remove task {:?}, due to error {:?}", id, m))
     }
 }
